@@ -63,7 +63,42 @@ void inorder(TreeNode* root)
 /*
 非递归方法需要补充
 以及建立二叉搜索树的code也需要补充
+建立二叉树的方法在108sortedArrayToBST题目中
 */
+/*
+非递归的方法，也就是迭代的方法
+利用中序遍历的迭代方法在输出的时候，进行计算。
+*/
+int getmin_num(TreeNode* root)
+{
+	stack<TreeNode*> s;
+	int pre_num = 0;
+	int now_num = 0;
+	int min_num = 0;
+	int ans =INT_MAX;
+	TreeNode* ptr = root;
+	while (ptr != NULL || !s.empty())
+	{
+		while (ptr != NULL)
+		{
+			s.push(ptr);
+			ptr = ptr->left;
+		}
+		if (!s.empty())
+		{
+			ptr = s.top();
+			pre_num = ptr->val;
+			s.pop();
+			now_num = s.top()->val;
+			min_num = abs(now_num - pre_num);
+			ans = min(ans, min_num);
+			ptr = ptr->right;
+		}
+		
+		
+	}
+	return ans;
+}
 //官方函数
 int getMinimumDifference(TreeNode* root) {
 	inorder(root);
