@@ -148,11 +148,83 @@ void reorderlist_2(ListNode* head)
         }
         reorderhelper(head, len);
 }
+/*
+执行用时：
+68 ms
+内存消耗：
+17.7 MB
+主要是利用到一头一尾取元素的特性。
+
+主要是三步，举个例子。
+
+
+1 -> 2 -> 3 -> 4 -> 5 -> 6
+第一步，将链表平均分成两半
+1 -> 2 -> 3
+4 -> 5 -> 6
+    
+第二步，将第二个链表逆序 我之前做错的是将整个链表逆序了
+1 -> 2 -> 3
+6 -> 5 -> 4
+    
+第三步，依次连接两个链表
+1 -> 6 -> 2 -> 5 -> 3 -> 4
+
+快慢指针。将链表分为两个
+快指针一次走两步，慢指针一次走一步，当快指针走到终点的话，慢指针会刚好到中点。
+如果节点个数是偶数的话，slow 走到的是左端点，利用这一点，我们可以把奇数和偶数的情况合并，不需要分开考虑。
+*/
+void reorderlist_3(ListNode* head)
+{
+    if(!head || !head->next|| !head->next->next)
+    {
+        return;
+    }
+    ListNode* fast = head;//这是fast指针，一次走两步
+    ListNode* slow = head;//慢指针，一次走一步
+    while(fast->next&&fast->next->next)//偶数和奇数的终止条件
+    {
+        fast = fast->next->next;
+        slow = slow->next;
+    }
+    ListNode* nexthalf = slow->next;//newhalf是后一半的头节点
+    slow->next = nullptr;//将链表分开
+
+    nexthalf = reverselist(nexthalf);
+    //开始分别填充最终的链表
+    while(nexthalf)//当是奇数的时候，后半部分的链表要短一些
+    {
+        ListNode* tmp = nexthalf->next;
+        nexthalf->next = head->next;
+        head->next = nexthalf;
+        head= nexthalf->next;
+        nexthalf = tmp;
+    }
+    
+
+}
+ListNode* rever(ListNode* head)
+{
+    ListNode* pre = head;
+    ListNode* current = pre->next;
+    ListNode* pnext= new ListNode(NULL);
+    while (current)
+    {
+        pnext = current->next;
+        current->next = pre;
+        pre = current;
+        current = pnext;
+    }
+    head->next = nullptr;
+    head = pre;
+    return head;
+    
+}
 int main()
 {
     ListNode* head = creatlist(inputnum);
     PrintList(head);
-    reorderlist_2(head);
+    reorderlist_3(head);
     cout<<"reorder"<<endl;
     PrintList(head);
     system("pause");
